@@ -1,0 +1,1 @@
+export const VCT_BASE_API = "https://vlrggapi.vercel.app/";
