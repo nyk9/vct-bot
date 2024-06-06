@@ -16,7 +16,6 @@ const discord_js_1 = require("discord.js");
 const dotenv_1 = __importDefault(require("dotenv"));
 const vct_api_1 = require("./constants/vct-api");
 dotenv_1.default.config();
-let i;
 const client = new discord_js_1.Client({
     intents: [
         discord_js_1.GatewayIntentBits.DirectMessages,
@@ -39,14 +38,22 @@ client.on("messageCreate", (message) => __awaiter(void 0, void 0, void 0, functi
     if (message.content === "/vamos")
         message.channel.send("https://tenor.com/view/drx-onur-vamos-stax-gif-26767488");
     if (message.content === "/liveScore") {
-        const response = yield fetch(vct_api_1.VCT_BASE_API + "match?q=results");
+        const response = yield fetch(vct_api_1.VCT_BASE_API + "match?q=live_score");
         const data = yield response.json();
         message.channel.send(data.data.segments[0].team1 + " " + data.data.segments[0].score1 + " - " + data.data.segments[0].score2 + " " + data.data.segments[0].team2);
     }
-    if (message.content === "/results") {
+    if (message.content.includes("/results")) {
         const response = yield fetch(vct_api_1.VCT_BASE_API + "match?q=results");
         const data = yield response.json();
-        // console.log(data);
-        message.channel.send(data.data.segments[0].team1 + " " + data.data.segments[0].score1 + " - " + data.data.segments[0].score2 + " " + data.data.segments[0].team2);
+        if (message.content === "/results") {
+            message.channel.send(data.data.segments[0].team1 + " " + data.data.segments[0].score1 + " - " + data.data.segments[0].score2 + " " + data.data.segments[0].team2);
+        }
+        else if (message.content === "/results all") {
+            const list = [];
+            data.data.segments.forEach((segment) => {
+                list.push(segment.team1 + " " + segment.score1 + " - " + segment.score2 + " " + segment.team2);
+            });
+            message.channel.send(list.join("\n"));
+        }
     }
 }));
